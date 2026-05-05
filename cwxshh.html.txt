@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>宠窝新手护航</title>
+
+    <!-- PWA 必要配置：让添加到桌面的图标像原生App -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="宠窝助手">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐱</text></svg>">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐱</text></svg>">
+    <link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22%E5%AE%A0%E7%AA%9D%E6%96%B0%E6%89%8B%E6%8A%A4%E8%88%AA%22%2C%22short_name%22%3A%22%E5%AE%A0%E7%AA%9D%E5%8A%A9%E6%89%8B%22%2C%22start_url%22%3A%22.%2F%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23FFF5F0%22%2C%22theme_color%22%3A%22%23FF8C69%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22data%3Aimage%2Fsvg%2Bxml%2C%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%20100%20100'%3E%3Ctext%20y%3D'.9em'%20font-size%3D'90'%3E%F0%9F%90%B1%3C%2Ftext%3E%3C%2Fsvg%3E%22%2C%22sizes%22%3A%22192x192%22%2C%22type%22%3A%22image%2Fsvg%2Bxml%22%7D%5D%7D">
+
+    <style>
+        :root {
+            --primary: #FF8C69;
+            --primary-light: #FFECE5;
+            --bg: #FFF5F0;
+            --card-bg: #FFFFFF;
+            --text: #3D2C2A;
+            --text-light: #9E8A87;
+            --danger: #FF4D4D;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            padding-bottom: 80px;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+            -webkit-user-select: none;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: var(--primary);
+            color: white;
+            padding: 25px 20px 30px;
+            border-radius: 0 0 30px 30px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(255, 140, 105, 0.3);
+        }
+
+        .header h1 {
+            font-size: 26px;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .social-proof {
+            background: rgba(255,255,255,0.2);
+            display: inline-block;
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-size: 13px;
+            margin-top: 12px;
+        }
+
+        .container {
+            padding: 20px 15px;
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 18px 15px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+            text-align: center;
+            cursor: pointer;
+            transition: 0.2s;
+            border: 1px solid transparent;
+        }
+
+        .card:active {
+            transform: scale(0.97);
+            border-color: var(--primary);
+            background: #FFF9F7;
+        }
+
+        .card .icon {
+            font-size: 36px;
+            margin-bottom: 8px;
+        }
+
+        .card .title {
+            font-weight: 600;
+            font-size: 15px;
+            margin-bottom: 4px;
+        }
+
+        .card .desc {
+            font-size: 12px;
+            color: var(--text-light);
+        }
+
+        .tip-banner {
+            background: #FFF4E5;
+            border-left: 4px solid var(--primary);
+            padding: 12px 15px;
+            border-radius: 12px;
+            margin: 20px 0;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tip-banner .emoji {
+            font-size: 18px;
+        }
+
+        .disclaimer {
+            background: #FFEBEB;
+            border: 1px solid var(--danger);
+            color: var(--danger);
+            border-radius: 12px;
+            padding: 12px;
+            margin: 15px 0;
+            font-size: 12px;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.04);
+            border-radius: 25px 25px 0 0;
+            z-index: 100;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 11px;
+            color: var(--text-light);
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .nav-item.active {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .nav-item .nav-icon {
+            font-size: 22px;
+            margin-bottom: 2px;
+        }
+
+        /* 安装引导浮层 (iOS) */
+        #install-guide-ios {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.88);
+            color: white;
+            padding: 14px 22px;
+            border-radius: 40px;
+            font-size: 15px;
+            font-weight: 500;
+            z-index: 9999;
+            align-items: center;
+            gap: 10px;
+            white-space: nowrap;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+
+        #install-guide-ios .arrow {
+            font-size: 20px;
+            animation: bounce 1.2s infinite;
+        }
+
+        @keyframes bounce {
+            0%,100% { transform: translateY(0); }
+            50% { transform: translateY(-6px); }
+        }
+
+        #install-guide-ios .close-guide {
+            margin-left: 6px;
+            font-size: 18px;
+            opacity: 0.8;
+            cursor: pointer;
+        }
+
+        /* 安卓安装按钮 */
+        #install-btn-android {
+            display: none;
+            position: fixed;
+            bottom: 90px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #FF8C69;
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 40px;
+            font-size: 16px;
+            font-weight: 600;
+            box-shadow: 0 6px 18px rgba(255,140,105,0.5);
+            z-index: 9999;
+            cursor: pointer;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(255,140,105,0.6); }
+            70% { box-shadow: 0 0 0 15px rgba(255,140,105,0); }
+            100% { box-shadow: 0 0 0 0 rgba(255,140,105,0); }
+        }
+
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 头部 -->
+    <div class="header">
+        <h1>🐱 宠窝新手护航</h1>
+        <p>你的私人养宠小管家</p>
+        <div class="social-proof">🔒 已有 52,319 位新手家长在使用</div>
+    </div>
+
+    <!-- 功能卡片区 -->
+    <div class="container">
+        <div class="card-grid">
+            <div class="card" onclick="alert('到家体检清单：眼👀 耳👂 口👄 鼻👃 皮肤✨ 精神状况🐾')">
+                <div class="icon">📋</div>
+                <div class="title">到家体检清单</div>
+                <div class="desc">勾选检查，防止遗漏</div>
+            </div>
+            <div class="card" onclick="alert('疫苗日历：根据出生日期已自动生成接种计划，提前3天提醒⏰')">
+                <div class="icon">💉</div>
+                <div class="title">智能疫苗日历</div>
+                <div class="desc">自动提醒，不怕漏打</div>
+            </div>
+            <div class="card" onclick="showCalculator()">
+                <div class="icon">🍖</div>
+                <div class="title">傻瓜喂食计算器</div>
+                <div class="desc">按品种/月龄算食量</div>
+            </div>
+            <div class="card" onclick="alert('便便/呕吐自查：🟤软便 ➜ 建议断食4小时观察\n🔴呕吐带血 ➜ 请立即就医\n\n⚠️ 本提示仅为参考，不构成医疗建议')">
+                <div class="icon">🩺</div>
+                <div class="title">便便/呕吐自查器</div>
+                <div class="desc">快速判断严重程度</div>
+            </div>
+        </div>
+
+        <!-- 免责声明 -->
+        <div class="disclaimer">
+            ⚠️ 重要提醒：本工具仅用于生活记录与参考，所有内容均不能替代专业兽医诊断。若宠物出现异常，请立即前往正规宠物医院就医。
+        </div>
+
+        <!-- 温情提示 -->
+        <div class="tip-banner">
+            <span class="emoji">💬</span>
+            <span>今天和它一起出门转转吧，它会很开心～</span>
+        </div>
+    </div>
+
+    <!-- 底部导航栏 -->
+    <div class="bottom-nav">
+        <div class="nav-item active">
+            <span class="nav-icon">🏠</span> 首页
+        </div>
+        <div class="nav-item">
+            <span class="nav-icon">📒</span> 记录
+        </div>
+        <div class="nav-item">
+            <span class="nav-icon">⏰</span> 提醒
+        </div>
+        <div class="nav-item">
+            <span class="nav-icon">👤</span> 我的
+        </div>
+    </div>
+
+    <!-- iOS 添加至桌面浮层 -->
+    <div id="install-guide-ios">
+        <span class="arrow">⬆️</span>
+        <span>点击分享 → 添加到主屏幕</span>
+        <span class="close-guide" onclick="document.getElementById('install-guide-ios').style.display='none'">✕</span>
+    </div>
+
+    <!-- 安卓一键安装按钮 -->
+    <button id="install-btn-android">📲 一键添加到桌面</button>
+
+    <!-- 简易喂食计算器弹窗 -->
+    <div id="calc-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:10000; justify-content:center; align-items:center;">
+        <div style="background:white; border-radius:24px; padding:25px; width:85%; max-width:320px; text-align:center;">
+            <h3 style="margin-bottom:15px;">🍖 喂食计算器</h3>
+            <p>幼猫/小型犬：每天约<b>30-50克/公斤体重</b></p>
+            <p style="font-size:13px; color:#888;">（此为通用建议，具体请参考主粮包装）</p>
+            <button onclick="document.getElementById('calc-modal').style.display='none'" style="margin-top:15px; background:#FF8C69; color:white; border:none; padding:10px 30px; border-radius:30px;">知道了</button>
+        </div>
+    </div>
+
+    <script>
+        // 简易计算器弹窗
+        function showCalculator() {
+            document.getElementById('calc-modal').style.display = 'flex';
+        }
+
+        // 检测是否已从桌面图标打开 (iOS)
+        if (window.navigator.standalone) {
+            // 已经是桌面应用，不显示引导
+        } else {
+            // 判断是否为 iOS 设备
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+            if (isIOS) {
+                // 延迟1.5秒后显示浮层，避免首页内容干扰
+                setTimeout(function() {
+                    document.getElementById('install-guide-ios').style.display = 'flex';
+                }, 1500);
+            }
+        }
+
+        // 安卓 PWA 安装提示
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            // 显示安装按钮
+            const btn = document.getElementById('install-btn-android');
+            btn.style.display = 'block';
+            btn.addEventListener('click', () => {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then(() => {
+                    deferredPrompt = null;
+                    btn.style.display = 'none';
+                });
+            });
+        });
+
+        // 如果已经安装为 PWA（安卓），隐藏按钮
+        window.addEventListener('appinstalled', () => {
+            document.getElementById('install-btn-android').style.display = 'none';
+        });
+    </script>
+
+</body>
+</html>
